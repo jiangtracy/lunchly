@@ -3,7 +3,7 @@
 /** Reservation for Lunchly */
 
 const moment = require('moment');
-
+const validator = require('validator');
 const db = require('../db');
 
 /** A reservation for a party */
@@ -17,6 +17,16 @@ class Reservation {
 		this.notes = notes;
 	}
 
+	/* numGuests setter, validates number */
+	set numGuests(numGuests) {
+		if (numGuests > 0) this.numGuests = numGuests;
+		else throw new Error("Must have more than 0 guests.");
+	}
+
+	set startAt(startAt) {
+		if (validator.isDate(startAt)) this.startAt = startAt;
+		else throw new Error("Invalid Date!");
+	}
 	/** formatter for startAt */
 
 	getFormattedStartAt() {
@@ -34,7 +44,7 @@ class Reservation {
                   notes AS "notes"
            FROM reservations
            WHERE customer_id = $1`,
-			[ customerId ]
+			[customerId]
 		);
 
 		return results.rows.map((row) => new Reservation(row));
@@ -46,13 +56,13 @@ class Reservation {
 		if (this.id === undefined) {
 			const result = await db.query(
 				`INSERT INTO reservations (
-              customer_id, 
-              num_guests, 
+              customer_id,
+              num_guests,
               start_at,
               notes)
             VALUES ($1, $2, $3, $4)
             RETURNING id`,
-				[ this.customerId, this.numGuests, this.startAt, this.notes ]
+				[this.customerId, this.numGuests, this.startAt, this.notes]
 			);
 			this.id = result.rows[0].id;
 		} else {
@@ -63,7 +73,7 @@ class Reservation {
                  start_at=$3,
                  notes=$4
               WHERE id = $5`,
-				[ this.customerId, this.numGuests, this.startAt, this.notes, this.id ]
+				[this.customerId, this.numGuests, this.startAt, this.notes, this.id]
 			);
 		}
 	}

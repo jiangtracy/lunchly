@@ -67,7 +67,7 @@ class Customer {
               notes
        FROM customers
        WHERE first_name ILIKE $1
-       OR last_name ILIKE $1 
+       OR last_name ILIKE $1
        OR last_name ILIKE $2 `,
 			[ `%${firstName}%`, `%${lastName}%` ]
 		);
@@ -87,7 +87,7 @@ class Customer {
 	}
 	/* generate a fullname for a customer */
 
-	fullName() {
+	get fullName() {
 		return `${this.firstName} ${this.lastName}`;
 	}
 	/** get all reservations for this customer. */
@@ -101,15 +101,15 @@ class Customer {
 	static async bestCustomers() {
 		//grab top 10 customers' ids
 		const results = await db.query(
-      `SELECT c.id, c.first_name AS "firstName", 
-                    c.last_name AS "lastName", 
-                    c.phone, 
-                    c.notes 
-        FROM customers AS c 
-          JOIN reservations AS r 
-            ON c.id = r.customer_id 
-          GROUP BY c.id  
-          ORDER BY COUNT(r.id) DESC 
+      `SELECT c.id, c.first_name AS "firstName",
+                    c.last_name AS "lastName",
+                    c.phone,
+                    c.notes
+        FROM customers AS c
+          JOIN reservations AS r
+            ON c.id = r.customer_id
+          GROUP BY c.id
+          ORDER BY COUNT(r.id) DESC
           LIMIT 10;`
 		);
     console.log("results", results.rows);
