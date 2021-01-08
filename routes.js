@@ -28,7 +28,8 @@ router.get('/', async function(req, res, next) {
 
 /* Show a list of top 10 customers */
 router.get('/best', async function(req, res, next) {
-	const customers = await Customer.bestCustomers();
+  const customers = await Customer.bestCustomers();
+  console.log("cusotmers in route", customers);
 	return res.render('customer_best.html', { customers });
 });
 

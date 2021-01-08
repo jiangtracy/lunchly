@@ -67,6 +67,7 @@ class Customer {
               notes
        FROM customers
        WHERE first_name ILIKE $1
+       OR last_name ILIKE $1 
        OR last_name ILIKE $2 `,
 			[ `%${firstName}%`, `%${lastName}%` ]
 		);
@@ -96,31 +97,23 @@ class Customer {
 	}
 
 	/* gereate top 10 customers with highest number of reservations  */
-
+  //join into one query
 	static async bestCustomers() {
 		//grab top 10 customers' ids
-		const rResults = await db.query(
-			`SELECT customer_id, COUNT(id) 
-        FROM reservations 
-        GROUP BY customer_id
-        ORDER BY COUNT(id) DESC 
-        LIMIT 10`
+		const results = await db.query(
+      `SELECT c.id, c.first_name AS "firstName", 
+                    c.last_name AS "lastName", 
+                    c.phone, 
+                    c.notes 
+        FROM customers AS c 
+          JOIN reservations AS r 
+            ON c.id = r.customer_id 
+          GROUP BY c.id  
+          ORDER BY COUNT(r.id) DESC 
+          LIMIT 10;`
 		);
-		let bestCustomersIdArray = rResults.rows.map((customer) => Number(customer.customer_id));
-
-		//grab customer name
-		const cResults = await db.query(
-			`SELECT id,
-        first_name AS "firstName",
-        last_name  AS "lastName",
-        phone,
-        notes
-        FROM customers
-        WHERE id IN ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-			[ ...bestCustomersIdArray ]
-		);
-
-		return cResults.rows.map((row) => new Customer(row));
+    console.log("results", results.rows);
+		return results.rows.map((row) => new Customer(row));
 	}
 
 	/** save this customer. */
