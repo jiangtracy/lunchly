@@ -1,5 +1,6 @@
 'use strict';
 
+const { isDate } = require('moment');
 /** Reservation for Lunchly */
 
 const moment = require('moment');
@@ -12,21 +13,28 @@ class Reservation {
 	constructor({ id, customerId, numGuests, startAt, notes }) {
 		this.id = id;
 		this.customerId = customerId;
-		this.numGuests = numGuests;
+		this._numGuests = numGuests;
 		this.startAt = startAt;
 		this.notes = notes;
 	}
 
+  /* numGuests getter */
+  get numGuests(){
+    return this._numGuests;
+  }
+
 	/* numGuests setter, validates number */
 	set numGuests(numGuests) {
-		if (numGuests > 0) this.numGuests = numGuests;
+		if (numGuests > 0) this._numGuests = numGuests;
 		else throw new Error("Must have more than 0 guests.");
-	}
+  }
+  
 
-	set startAt(startAt) {
-		if (validator.isDate(startAt)) this.startAt = startAt;
-		else throw new Error("Invalid Date!");
-	}
+  // set startAt(startAt){
+  //   if (isDate(startAt)) this._startAt = startAt;
+	// 	else throw new Error("Must be a valid date");
+  // }
+
 	/** formatter for startAt */
 
 	getFormattedStartAt() {
