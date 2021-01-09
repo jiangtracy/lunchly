@@ -29,11 +29,12 @@ class Reservation {
 		else throw new Error("Must have more than 0 guests.");
   }
   
-
-  // set startAt(startAt){
-  //   if (isDate(startAt)) this._startAt = startAt;
-	// 	else throw new Error("Must be a valid date");
-  // }
+  get startAt(){
+    return this._startAt;
+  }
+  set startAt(startAt){
+    this._startAt = startAt;
+  }
 
 	/** formatter for startAt */
 
